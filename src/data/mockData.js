@@ -9,12 +9,14 @@ export let gcv3 = [];
 export let hitsTracker = [];
 export let dailyMetrics = {};
 export let metabase = [];
+export let pausedSellers = [];
 
 export function updateSheetData(data) {
   if (data.goLiveTracker) goLiveTracker = data.goLiveTracker;
   if (data.gcv3) gcv3 = data.gcv3;
   if (data.hitsTracker) hitsTracker = data.hitsTracker;
   if (data.dailyMetrics) dailyMetrics = data.dailyMetrics;
+  if (data.pausedSellers) pausedSellers = data.pausedSellers;
 }
 // Old mock data deleted.
 

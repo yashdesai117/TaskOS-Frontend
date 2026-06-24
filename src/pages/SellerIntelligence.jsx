@@ -3,7 +3,7 @@ import { Search, ArrowUpDown } from 'lucide-react';
 import {
   AreaChart, Area, ResponsiveContainer, Tooltip,
 } from 'recharts';
-import { gcv3, goLiveTracker, hitsTracker, metabase } from '../data/mockData';
+import { gcv3, goLiveTracker, hitsTracker, metabase, pausedSellers } from '../data/mockData';
 import { pnlColor, formatINR } from '../utils/formatters';
 
 function MiniChart({ weeks, color }) {
@@ -46,13 +46,16 @@ export default function SellerIntelligence() {
     const prev   = g.weeks.at(-2);
     const last2  = g.weeks.slice(-2);
     const isPotential = last2.every(w => w.pnl > 5) && latest.spend > 3500 && g.pq > 2.8 && !hit?.isHit;
+    const isPaused = pausedSellers.includes(g.sellerId);
+    const isLive = (live?.isLive ?? false) && !isPaused;
+    
     return {
       sellerId: g.sellerId, sellerName: g.sellerName,
-      gc: live?.gc ?? '—', isLive: live?.isLive ?? false,
+      gc: live?.gc ?? '—', isLive: isLive,
       latestPnl: latest.pnl, prevPnl: prev?.pnl ?? null, latestSpend: latest.spend,
       pq: g.pq, weeks: g.weeks, isHit: hit?.isHit ?? false, isPotential,
       orders: meta?.orders ?? 0, gmv: meta?.gmv ?? 0, rto: meta?.rto ?? 0,
-      isPaused: live?.isLive && latest.spend === 0,
+      isPaused: isPaused,
     };
   }), []);
 

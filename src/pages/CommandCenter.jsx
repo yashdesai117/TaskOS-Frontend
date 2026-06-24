@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Target, Zap, TrendingUp, Users, BarChart2, ArrowRight } from 'lucide-react';
 import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts';
-import { dailyMetrics, gcv3, metabase, goLiveTracker } from '../data/mockData';
+import { dailyMetrics, gcv3, metabase, goLiveTracker, pausedSellers } from '../data/mockData';
 import { prioritizeTasks } from '../engines/prioritization';
 import { enrichTask, enrichSellerContext } from '../engines/contextEnricher';
 import TaskCard from '../components/TaskCard';
@@ -23,11 +23,7 @@ const SPEND_TREND = ['W1','W2','W3','W4'].map(w => ({
 // Watchlist: paused accounts + near-hit accounts
 function buildWatchlist() {
   const paused = gcv3
-    .filter(s => {
-      const prev = s.weeks.at(-2);
-      const curr = s.weeks.at(-1);
-      return prev?.spend > 0 && curr?.spend === 0;
-    })
+    .filter(s => pausedSellers.includes(s.sellerId))
     .map(s => ({
       ...enrichSellerContext(s.sellerId, s.sellerName),
       alertType: 'paused',
