@@ -46,6 +46,9 @@ export default function TaskCard({ task, rank, onComplete }) {
         <div className="task-footer">
           <div className="task-meta">
             <span className="task-time">{formatDistanceToNow(task.createdAt)}</span>
+            {task.sender && (
+              <span className="task-seller-name" style={{ color: 'var(--tx-primary)', fontWeight: 500, marginRight: 6 }}>👤 From: {task.sender}</span>
+            )}
             {task.sellerName && (
               <span className="task-seller-name">📍 {task.sellerName}</span>
             )}
