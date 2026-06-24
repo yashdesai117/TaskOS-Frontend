@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import {
-  LayoutDashboard, CheckSquare, Zap, Bell, BarChart3, ChevronRight
+  LayoutDashboard, CheckSquare, Zap, Bell, BarChart3, ChevronRight, LogOut
 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 import { dailyMetrics } from '../data/mockData';
 import { generateDataTasks } from '../engines/dataTaskGenerator';
 
@@ -80,7 +81,12 @@ export default function Sidebar({ activePage, onNavigate }) {
             <div className="user-pill-name">Yash</div>
             <div className="user-pill-role">Growth Manager</div>
           </div>
-          <ChevronRight size={13} style={{ color: 'var(--sidebar-text-dim)', flexShrink: 0 }} />
+          <LogOut 
+            size={13} 
+            style={{ color: 'var(--sidebar-text-dim)', flexShrink: 0, cursor: 'pointer' }} 
+            onClick={() => supabase.auth.signOut()}
+            title="Sign Out"
+          />
         </div>
       </div>
     </aside>

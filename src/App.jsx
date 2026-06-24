@@ -8,6 +8,8 @@ import DataAlerts from './pages/DataAlerts';
 import TeamPerformance from './pages/TeamPerformance';
 import { seedTasks, updateSheetData } from './data/mockData';
 import { enrichTask } from './engines/contextEnricher';
+import { supabase } from './lib/supabase';
+import Auth from './pages/Auth';
 
 const PAGE_META = {
   command: { title: 'Command Center',     subtitle: 'Your highest-priority actions, right now' },
@@ -23,8 +25,25 @@ export default function App() {
   const [tasks, setTasks] = useState(() =>
     seedTasks.map(t => ({ ...t, sellerContext: enrichTask(t).sellerContext }))
   );
+  const [session, setSession] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   
   const completedIdsRef = useRef(new Set());
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setIsAuthLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const pollWhatsApp = async () => {
@@ -76,6 +95,42 @@ export default function App() {
   };
 
   const { title, subtitle } = PAGE_META[activePage] || {};
+
+  if (isAuthLoading) {
+    return <div style={{ height: '100vh', width: '100vw', background: 'var(--bg-root)' }} />;
+  }
+
+  if (!session) {
+    return <Auth />;
+  }
+
+  const userEmail = session.user.email;
+  const isAuthorizedAdmin = userEmail === 'desai.yash@blitzscale.co';
+
+  if (!isAuthorizedAdmin) {
+    return (
+      <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden', background: 'var(--bg-root)' }}>
+        <div className="main-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="card" style={{ padding: 40, textAlign: 'center', maxWidth: 400 }}>
+            <h2 style={{ fontSize: '1.4rem', color: 'var(--tx-primary)', marginBottom: 12 }}>Welcome to Task OS</h2>
+            <p style={{ color: 'var(--tx-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: 24 }}>
+              Your workspace data is currently being provisioned. You will be notified when your dashboard is ready.
+            </p>
+            <button 
+              onClick={() => supabase.auth.signOut()}
+              style={{
+                padding: '8px 16px', background: 'transparent', border: '1px solid var(--border)',
+                color: 'var(--tx-primary)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                fontSize: '0.85rem'
+              }}
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
