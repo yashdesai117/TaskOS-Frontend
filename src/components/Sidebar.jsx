@@ -81,13 +81,22 @@ export default function Sidebar({ activePage, onNavigate }) {
             <div className="user-pill-name">Yash</div>
             <div className="user-pill-role">Growth Manager</div>
           </div>
-          <LogOut 
-            size={13} 
-            style={{ color: 'var(--sidebar-text-dim)', flexShrink: 0, cursor: 'pointer' }} 
-            onClick={() => supabase.auth.signOut()}
-            title="Sign Out"
-          />
         </div>
+        <button 
+          onClick={() => supabase.auth.signOut()}
+          style={{
+            marginTop: 12, width: '100%', padding: '8px', background: 'transparent',
+            border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)',
+            color: 'var(--tx-muted)', fontSize: '0.8rem', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            transition: 'color 0.2s, border-color 0.2s'
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = 'var(--tx-primary)'; e.currentTarget.style.borderColor = 'var(--tx-secondary)' }}
+          onMouseLeave={e => { e.currentTarget.style.color = 'var(--tx-muted)'; e.currentTarget.style.borderColor = 'var(--border)' }}
+        >
+          <LogOut size={14} />
+          Sign Out
+        </button>
       </div>
     </aside>
   );
