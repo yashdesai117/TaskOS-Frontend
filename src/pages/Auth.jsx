@@ -121,7 +121,7 @@ export default function Auth() {
             type="submit" 
             disabled={loading}
             style={{
-              width: '100%', padding: '10px', background: 'var(--tx-primary)', color: 'var(--bg-root)',
+              width: '100%', padding: '10px', background: 'var(--tx-primary)', color: '#FFFFFF',
               border: 'none', borderRadius: 'var(--radius-md)', fontSize: '0.9rem', fontWeight: 600,
               cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, marginTop: 8,
               transition: 'transform 0.1s, opacity 0.2s'
