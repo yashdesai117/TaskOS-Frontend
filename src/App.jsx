@@ -31,10 +31,15 @@ export default function App() {
   const completedIdsRef = useRef(new Set());
 
   useEffect(() => {
+    if (!supabase) {
+      setIsAuthLoading(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setIsAuthLoading(false);
-    });
+    }).catch(() => setIsAuthLoading(false));
 
     const {
       data: { subscription },
@@ -95,6 +100,19 @@ export default function App() {
   };
 
   const { title, subtitle } = PAGE_META[activePage] || {};
+
+  if (!supabase) {
+    return (
+      <div style={{ display: 'flex', height: '100vh', width: '100vw', background: 'var(--bg-root)', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="card" style={{ padding: 40, textAlign: 'center', maxWidth: 450 }}>
+          <h2 style={{ color: 'var(--danger)', marginBottom: 16 }}>Missing Environment Variables</h2>
+          <p style={{ color: 'var(--tx-secondary)', lineHeight: 1.5 }}>
+            TaskOS cannot connect to Supabase. Please ensure you have added <strong>VITE_SUPABASE_URL</strong> and <strong>VITE_SUPABASE_ANON_KEY</strong> to your Vercel Environment Variables, and <strong>redeploy</strong> your app.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (isAuthLoading) {
     return <div style={{ height: '100vh', width: '100vw', background: 'var(--bg-root)' }} />;
